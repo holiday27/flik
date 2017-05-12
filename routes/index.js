@@ -1,30 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const bookshelf = require('../modules/connection');
-/* GET home page. */
-const entity = {
-  id: 8
-};
-/* GET home page. */
-const entity2 = {
-  id: 9
-};
+// const { entity, entity_message } = require('../modules/connection');
+// const selectAllB = require('../modules/exemples');
 
-const entityArray = [];
-
-entityArray.push(entity);
-
-entityArray.push(entity2);
-
-const entityTable = bookshelf.Model.extend({
+const entity = bookshelf.Model.extend({
   tableName: 'entity'
 });
 
 router.get('/', (req, res, next) => {
-  entityTable.forge().fetch().then((result) => {
-    console.log(result);
-    res.send(JSON.stringify(result, null, 2));
-  });
+  entity.forge().fetchAll().then(result => res.send(JSON.stringify(result, null, 2)));
+  // next();
+});
+
+router.post('/', (req, res, next) => {
+  res.send();
 });
 
 module.exports = router;
