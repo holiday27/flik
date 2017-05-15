@@ -1,12 +1,12 @@
 const Bookshelf = require('../modules/connection');
-const reply = require('./Reply');
-const entityMessages = require('./EntityMessage');
-const messages = require('./Message');
-
+const message = require('./Message');
+// const entityMessages = require('./EntityMessage');
+// const entityMessages = require('./EntityMessage');
 const entity = Bookshelf.Model.extend({
   tableName: 'entity',
+  idAttribute: 'id',
   messages() {
-    return this.hasMany(messages);
+    return this.belongsToMany(message, 'entity_message');
   }
 });
 

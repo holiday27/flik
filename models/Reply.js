@@ -1,14 +1,14 @@
 const Bookshelf = require('../modules/connection');
 const entity = require('./Entity');
-const messages = require('./Message');
+const message = require('./Message');
 
 const reply = Bookshelf.Model.extend({
   tableName: 'reply',
-  entity() {
-    return this.belongsTo(entity);
+  entities() {
+    return this.belongsToMany(entity, 'entity');
   },
   message() {
-    return this.belongsTo(messages);
+    return this.belongsTo(message, 'message');
   }
 });
 

@@ -1,61 +1,29 @@
 const {
   GraphQLObjectType,
-  GraphQLInt,
-  GraphQLString,
   GraphQLList,
   GraphQLSchema
 } = require('graphql');
 
 const entity = require('../models/Entity');
-
-const entityType = new GraphQLObjectType({
-  name: 'entity',
-  description: 'Table Entity',
-  fields: () => ({
-    id: {
-      type: GraphQLInt,
-      resolve(tableEntity) {
-        return tableEntity.id;
-      }
-    },
-    name: {
-      type: GraphQLString,
-      resolve(tableEntity) {
-        return tableEntity.name;
-      }
-    },
-    created: {
-      type: GraphQLString,
-      resolve(tableEntity) {
-        return tableEntity.created;
-      }
-    },
-    modified: {
-      type: GraphQLString,
-      resolve(tableEntity) {
-        return tableEntity.modified;
-      }
-    }
-  })
-});
+const messages = require('../models/Message');
+const messageType = require('./messageType');
+const entityType = require('./entityType');
 
 
 const Query = new GraphQLObjectType({
   name: 'Query',
   description: 'Query root',
   fields: () => ({
-    entity: {
+    entities: {
       type: new GraphQLList(entityType),
-      args: {
-        id: {
-          type: GraphQLInt
-        },
-        name: {
-          type: GraphQLString
-        }
-      },
       resolve(root, args) {
         return entity.forge().where(args).fetchAll();
+      }
+    },
+    messages: {
+      type: new GraphQLList(messageType),
+      resolve(root, args) {
+        return messages.forge().where(args).fetchAll();
       }
     }
   })
