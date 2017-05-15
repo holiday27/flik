@@ -8,7 +8,7 @@ const {
 
 const entity = require('../models/Entity');
 
-const Entity = new GraphQLObjectType({
+const entityType = new GraphQLObjectType({
   name: 'entity',
   description: 'Table Entity',
   fields: () => ({
@@ -45,7 +45,7 @@ const Query = new GraphQLObjectType({
   description: 'Query root',
   fields: () => ({
     entity: {
-      type: new GraphQLList(Entity),
+      type: new GraphQLList(entityType),
       args: {
         id: {
           type: GraphQLInt
