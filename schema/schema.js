@@ -77,22 +77,20 @@ const messageType = new GraphQLObjectType({
       }
     },
     replies: {
-      type: new GraphQLList(replyType)
-
-
-      // resolve(tableMessage) {
-      //   // console.log('tableType', tableMessage.toJSON());
-      //   messages.forge({ id: tableMessage.get('id') }).fetch({ withRelated: 'replies' }).then((message) => {
-      //     console.log(tableMessage.get('id'));
-      //     console.log(replies);
-      //     return replies;
-      //   });
-      // }
+      type: new GraphQLList(replyType),
+      resolve: async (model) => {
+        const collection = await model.replies().fetch();
+        return collection.models;
+      }
     },
-    entities: {// this.belongsToMany('entity_message', {
+    entities: {
       type: new GraphQLList(entityType),
-      description: 'Represents entitites on the message'
-    }// )
+      description: 'Represents entitites on the message',
+      resolve: async (model) => {
+        const collection = await model.entities().fetch();
+        return collection.models;
+      }
+    }
   })
 });
 
