@@ -42,7 +42,12 @@ const entityType = new GraphQLObjectType({
       }
     },
     messages: {
-      type: new GraphQLList(messageType)
+      type: new GraphQLList(messageType),
+      description: 'Represents entitites message',
+      resolve: async (model) => {
+        const collection = await model.messages().fetch();
+        return collection.models;
+      }
     }
   })
 });

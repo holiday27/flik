@@ -6,7 +6,7 @@ const entity = Bookshelf.Model.extend({
   tableName: 'entity',
   idAttribute: 'id',
   messages() {
-    return this.belongsToMany(message, 'entity_message');
+    return this.belongsToMany(message, 'entity_message', 'entity_id');
   }
 });
 
