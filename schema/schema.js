@@ -7,11 +7,9 @@ const {
 } = require('graphql');
 
 const entity = require('../models/Entity');
-const reply = require('../models/Reply');
-const messages = require('../models/Message');
+const message = require('../models/Message');
+// const { message } = require('../models/circularModel'); Solução provisória
 const replyType = require('./replyType');
-// const messageType = require('./messageType');
-// const entityType = require('./entityType');
 
 const entityType = new GraphQLObjectType({
   name: 'entity',
@@ -113,7 +111,7 @@ const Query = new GraphQLObjectType({
     messages: {
       type: new GraphQLList(messageType),
       resolve(root, args) {
-        return messages.forge().where(args).fetchAll();
+        return message.forge().where(args).fetchAll();
       }
     }
   })
