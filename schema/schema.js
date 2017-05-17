@@ -5,11 +5,15 @@ const {
   GraphQLInt,
   GraphQLString
 } = require('graphql');
+const { mutationWithClientMutationId } = require('graphql-relay');
 
+// const { message } = require('../models/circularModel'); Solução provisória
 const entity = require('../models/Entity');
 const message = require('../models/Message');
-// const { message } = require('../models/circularModel'); Solução provisória
 const replyType = require('./replyType');
+
+
+/* Query */
 
 const entityType = new GraphQLObjectType({
   name: 'entity',
@@ -97,6 +101,93 @@ const messageType = new GraphQLObjectType({
   })
 });
 
+/* Mutation */
+
+// const addMessage = new GraphQLObjectType({
+//   name: 'mutation addmessage',
+//   description: 'Mutation fro adding data on Message table',
+//   fields: () => ({
+//     addMessage: {
+//       type: messageType,
+//       args: {
+//         content: { type: GraphQLString }
+//       },
+//       resolve: () => null
+//     }
+//   })
+// });
+const addEntity = mutationWithClientMutationId({
+  name: 'AddEntity',
+  inputFields: {
+    name: {
+      type: GraphQLString
+    }
+  },
+  outputFields: {
+    entity: {
+      type: entityType,
+      resolve: obj => obj
+    }
+  },
+  mutateAndGetPayload: async (input) => {
+    const saved = await entity.forge({ name: input.name }).save();
+    return saved;
+  }
+});
+
+const updateEntity = mutationWithClientMutationId({
+  name: 'UpdateEntity',
+  inputFields: {
+    id: { type: GraphQLInt },
+    name: { type: GraphQLString }
+  },
+  outputFields: {
+    entity: {
+      type: entityType,
+      resolve: obj => obj
+    }
+  },
+  mutateAndGetPayload: async (input) => {
+    // console.log('input-id: ', input.id);
+    // const saved = await entity.forge({ name: input.name }).where({ id: input.id });
+    const date = new Date();
+    console.log(date);
+    const target = await entity.forge({ id: input.id }).fetch();
+    target.set({ name: input.name }).save();
+    console.log('Target: ', target);
+    return target;
+  }
+});
+
+const Mutation = new GraphQLObjectType({
+  name: 'mutation',
+  description: 'Mutation root',
+  fields: () => ({
+    addEntity,
+    updateEntity
+    // ,
+    // updateEntity: {
+    //   type: entityType,
+    //   args: {
+    //     id: { type: GraphQLInt },
+    //     name: { type: GraphQLString }
+    //   },
+    //   resolve(root, args) {
+    //     return 'mutation';
+    //   }
+    // },
+    // deleteEntity: {
+    //   type: entityType,
+    //   args: {
+    //     id: { type: GraphQLInt }
+    //   },
+    //   resolve(root, args) {
+    //     return 'mutation';
+    //   }
+    // }
+  })
+});
+
 
 const Query = new GraphQLObjectType({
   name: 'Query',
@@ -104,12 +195,18 @@ const Query = new GraphQLObjectType({
   fields: () => ({
     entities: {
       type: new GraphQLList(entityType),
+      args: {
+        id: { type: GraphQLInt }
+      },
       resolve(root, args) {
         return entity.forge().where(args).fetchAll();
       }
     },
     messages: {
       type: new GraphQLList(messageType),
+      args: {
+        id: { type: GraphQLInt }
+      },
       resolve(root, args) {
         return message.forge().where(args).fetchAll();
       }
@@ -117,8 +214,10 @@ const Query = new GraphQLObjectType({
   })
 });
 
+
 const Schema = new GraphQLSchema({
-  query: Query
+  query: Query,
+  mutation: Mutation
 });
 
 module.exports = Schema;
