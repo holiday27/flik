@@ -36,6 +36,25 @@ mutation uploadEntity($up: UploadEntityInput!){
   }
 }
 
+mutation deleteEntity($up: DeleteEntityInput!){
+	deleteEntity(input: $up){
+    entity{
+      id
+      name
+      created
+      modified
+    }
+  }
+
+}
+
+{
+  "up": {
+    "id": 15,
+    "clientMutationId": "549b5e7c-0516-1312312-8944-125401211590"
+  }
+}
+
 
 // Mutation Reply
 
