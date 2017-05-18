@@ -17,7 +17,13 @@ const replyType = new GraphQLObjectType({
     id: {
       type: GraphQLInt,
       resolve(tableReply) {
-        return tableReply.get('message_id'); // ID message ou ID Entity ??
+        return tableReply.get('id');
+      }
+    },
+    message_id: {
+      type: GraphQLInt,
+      resolve(tableReply) {
+        return tableReply.get('message_id');
       }
     },
     entity_id: {
